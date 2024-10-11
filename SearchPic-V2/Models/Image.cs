@@ -1,4 +1,5 @@
 ﻿using Azure;
+using System.Collections.Generic;
 
 namespace SearchPic_V2.Models
 {

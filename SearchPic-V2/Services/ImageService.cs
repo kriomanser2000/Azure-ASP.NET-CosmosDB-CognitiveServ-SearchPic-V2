@@ -1,35 +1,45 @@
-﻿using SearchPic_V2.Services;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using SearchPic_V2.Models;
 
 namespace SearchPic_V2.Services
 {
     public class ImageService : IImageService
     {
-        private readonly ApplicationDbContext _context;
-        public ImageService(ApplicationDbContext context)
+        private readonly List<Image> _images = new List<Image>();
+        public async Task<IEnumerable<Image>> SearchImagesAsync(string keywords)
         {
-            _context = context;
+            return await Task.FromResult(_images.Where(img =>
+                img.Tags.Any(tag => tag.TagName.Contains(keywords))));
+        }
+        public async Task UploadImageAsync(ImageUploadViewModel model)
+        {
+            var newImage = new Image
+            {
+                ImageId = _images.Count + 1,
+                FileName = model.ImageFile.FileName,
+                BlobUrl = "/images/" + model.ImageFile.FileName,
+                Tags = new List<Tag> { new Tag { TagName = "ExampleTag" } }
+            };
+            _images.Add(newImage);
+            await Task.CompletedTask;
+        }
+        public async Task<Image> GetImageByIdAsync(int id)
+        {
+            return await Task.FromResult(_images.FirstOrDefault(img => img.ImageId == id));
         }
         public async Task SaveImageAsync(string fileName, string blobUrl, string tags)
         {
-            var tagList = tags.Split(',').Select(tag => new Tag { TagName = tag.Trim() }).ToList();
-            var image = new Image
+            var newImage = new Image
             {
+                ImageId = _images.Count + 1,
                 FileName = fileName,
                 BlobUrl = blobUrl,
-                Tags = tagList
+                Tags = tags.Split(',').Select(tag => new Tag { TagName = tag.Trim() }).ToList()
             };
-            _context.Images.Add(image);
-            await _context.SaveChangesAsync();
-        }
-        public async Task<IEnumerable<Image>> SearchImagesByKeywordsAsync(string keywords)
-        {
-            var keywordList = keywords.Split(',').Select(k => k.Trim()).ToList();
-            var query = _context.Images
-                .Include(i => i.Tags)
-                .Where(i => i.Tags.Any(tag => keywordList.Contains(tag.TagName)))
-                .AsQueryable();
-            return await query.ToListAsync();
+            _images.Add(newImage);
+            await Task.CompletedTask;
         }
     }
 }

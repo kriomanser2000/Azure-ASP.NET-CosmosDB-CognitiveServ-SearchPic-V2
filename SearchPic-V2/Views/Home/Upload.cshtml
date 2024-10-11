@@ -1,0 +1,13 @@
+﻿@model SearchPic_V2.Models.ImageUploadViewModel
+@{
+    ViewData["Title"] = "Upload";
+}
+
+<h2>Завантаження зображень</h2>
+<form asp-action="Upload" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="ImageFile">Виберіть зображення для завантаження</label>
+        <input type="file" class="form-control" id="ImageFile" name="ImageFile" />
+    </div>
+    <button type="submit" class="btn btn-primary">Завантажити</button>
+</form>

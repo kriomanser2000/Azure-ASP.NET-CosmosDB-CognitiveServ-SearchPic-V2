@@ -1,8 +1,14 @@
-﻿@{
+﻿@model SearchPic_V2.Models.ImageSearchViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h2>Пошук зображень</h2>
+<form asp-action="Search" method="get">
+    <div class="form-group">
+        <label for="Keywords">Ключові слова</label>
+        <input type="text" class="form-control" id="Keywords" name="Keywords" value="@Model.Keywords" placeholder="Введіть ключові слова для пошуку" />
+    </div>
+    <button type="submit" class="btn btn-primary">Шукати</button>
+</form>
+<a asp-action="Upload" class="btn btn-success mt-3">Завантажити зображення</a>

@@ -1,5 +1,10 @@
 ﻿using SearchPic_V2.Services;
 using SearchPic_V2.Models;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace SearchPic_V2.Services
 {
@@ -19,7 +24,8 @@ namespace SearchPic_V2.Services
                 content.Headers.Add("Content-Type", file.ContentType);
                 var response = await _httpClient.PostAsync(_cognitiveServiceUrl, content);
                 response.EnsureSuccessStatusCode();
-                var moderationResult = await response.Content.ReadAsAsync<ModerationResult>();
+                var responseStream = await response.Content.ReadAsStreamAsync();
+                var moderationResult = await JsonSerializer.DeserializeAsync<ModerationResult>(responseStream);
                 return moderationResult;
             }
         }

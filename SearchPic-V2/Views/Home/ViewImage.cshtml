@@ -1,0 +1,14 @@
+﻿@model SearchPic_V2.Models.Image
+@{
+    ViewData["Title"] = "View";
+}
+
+<h2>Перегляд зображення</h2>
+<div class="card mb-4 shadow-sm">
+    <img class="card-img-top" src="@Model.BlobUrl" alt="@Model.FileName" />
+    <div class="card-body">
+        <h4>@Model.FileName</h4>
+        <p>Теги: @string.Join(", ", Model.Tags.Select(t => t.TagName))</p>
+        <a asp-action="Index" class="btn btn-secondary">Назад до пошуку</a>
+    </div>
+</div>
