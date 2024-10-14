@@ -1,14 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SearchPic_V2.Models;
 using SearchPic_V2.Services;
+using Microsoft.Azure.Cosmos;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton<CosmosClient>(cosmosClient =>
+{
+    string connectionString = builder.Configuration["CosmosDb:ConnectionString"];
+    return new CosmosClient(connectionString);
+});
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<ICosmosDbService, CosmosDbService>();
 
 builder.Services.AddHttpClient<ICognitiveService, CognitiveService>(client =>
 {
@@ -17,8 +20,9 @@ builder.Services.AddHttpClient<ICognitiveService, CognitiveService>(client =>
 });
 
 builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
-
 builder.Services.AddScoped<IImageService, ImageService>();
+
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddControllersWithViews();
 
